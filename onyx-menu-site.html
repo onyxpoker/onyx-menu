@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ONYX Poker Club — меню</title>
+<link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400;700&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0e7d4;--ink:#1b1916;--acc:#8c1c2b;--mut:#6a5f50;--rule:rgba(140,28,43,.55);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body::before{content:'';position:fixed;top:10px;left:10px;right:10px;bottom:10px;border:3px double rgba(140,28,43,.55);pointer-events:none}
+body{margin:0;min-height:100vh;background:repeating-linear-gradient(0deg,rgba(70,45,20,.045) 0 1px,transparent 1px 3px),radial-gradient(ellipse at 50% 42%,transparent 52%,rgba(130,95,50,.22) 100%),#f0e7d4;color:var(--ink);font:16px/1.4 'Jost',sans-serif}
+.w{max-width:720px;margin:0 auto;padding:36px 20px 56px}
+.logo{text-align:center}
+.logo b{display:block;font:400 clamp(44px,13vw,64px)/1.1 'Old Standard TT',serif;letter-spacing:.3em;margin-right:-.3em}
+.logo i{display:block;font-style:normal;font-size:11px;letter-spacing:.8em;margin-right:-.8em;color:var(--acc)}
+.tabs{display:flex;justify-content:center;gap:12px;margin:28px 0 14px}
+button{font:inherit;color:var(--ink);background:none;border:1px solid var(--rule);min-height:44px;cursor:pointer}
+.tabs button{padding:0 30px;font:500 15px 'Jost',sans-serif;letter-spacing:.25em;text-transform:uppercase}
+button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#f0e7d4}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:thin}
+.chips button{flex:none;padding:0 16px;border-radius:22px;font-size:14px}
+h2{margin:22px 0 8px;padding-bottom:8px;border-bottom:2px solid var(--ink);font:700 24px/1.15 'Old Standard TT',serif;letter-spacing:.1em;text-transform:uppercase;color:var(--acc)}
+.row{display:grid;grid-template-columns:1fr auto;gap:4px 16px;padding:12px 0;border-bottom:1px solid rgba(27,25,22,.16)}
+.n{font-size:17px}
+.d{grid-column:1;font-size:13.5px;color:var(--mut)}
+.rt{grid-column:2;grid-row:1/3;text-align:right;white-space:nowrap}
+.p{font-weight:500;font-size:17px}
+.q{font-size:13px;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="w">
+<div class="logo"><b>ONYX</b><i>POKER CLUB</i></div>
+<div class="tabs" id="tabs"></div>
+<div class="chips" id="chips"></div>
+<div id="sec"></div>
+</div>
+<script>
+var D={food:[
+["zak","Закуски",`Куриный попкорн|200 г|425 ₽
+Картофель фри с копчёной паприкой|200 г|250 ₽
+Батат фри|200 г|330 ₽
+Картофель по-деревенски|200 г|300 ₽
+Куриные наггетсы|6 шт / 9 шт|350 / 450 ₽
+Куриные стрипсы|5 шт|400 ₽
+Драники|4 шт|300 ₽
+Луковые кольца|6 шт / 9 шт|290 / 400 ₽`],
+["sup","Супы",`Борщ с салом|450/30 г|530 ₽|подаётся со сметаной из топлёных сливок и бородинским хлебом
+Солянка мясная|450 г|570 ₽|говяжий бульон, маринованные огурцы, маслины, копчёная куриная грудка, карбонад свиной, ветчина свиная, лук репчатый, томатная паста`],
+["pech","Из печи",`Римская пицца Пепперони||790 ₽
+Римская пицца Цыплёнок ранч||790 ₽
+Римская пицца 4 сыра||790 ₽
+Римская пицца Ветчина и сыр||790 ₽
+Римская пицца Мясная барбекю||790 ₽
+Кесадилья по-деревенски|330 г|690 ₽|фарш свинина-говядина, тортилья кукурузная, томатная паста, красная фасоль, кукуруза, лук, сыр моцарелла, сыр чеддер
+Сэндвич Мексиканский||590 ₽
+Сэндвич Ветчина||590 ₽
+Сэндвич Говядина||590 ₽`],
+["sn","Снеки",`Сыровяленая курица|70 г|270 ₽
+Сыровяленая свинина|70 г|250 ₽
+Гренки «Красная икра»|60 г|150 ₽
+Гренки «Тайский перец»|60 г|150 ₽
+Копчёный сыр со вкусом бекона|50 г|230 ₽
+Кальмар вяленый|50 г|230 ₽
+Фисташки Америка|50 г|250 ₽
+Арахис крупный|50 г|110 ₽
+Pringles в ассортименте|40 г|180 ₽`],
+["tar","Пивные тарелки",`Тарелка «M»||750 ₽|наггетсы 6 шт, картофель фри 200 г, луковые кольца 6 шт, батат фри 200 г, вяленая свинина (порция), 2 соуса на выбор
+Тарелка «L»||1200 ₽|куриный попкорн 300 г, картофель по-деревенски 400 г, куриные стрипсы 9 шт, драники 4 шт, вяленая курица (порция), 4 соуса на выбор`],
+["des","Десерты",`Торт малина-фисташка||550 ₽
+Чизкейк мраморный||400 ₽
+Чизкейк фисташка||400 ₽
+Мороженое||200 ₽|2 шарика на выбор: клубника / ваниль`],
+["sou","Соусы",`Соус в ассортименте|30 г|55 ₽|Баффало (пикантный), сырный, кисло-сладкий, сырный чили (пикантный), барбекю, шрирача (острый), унаги`]
+],bar:[
+["lim","Лимонады",`Оникс - Onyx|450 / 900 мл|320 / 590 ₽|щавель-лайм
+Руби Раш - Ruby Rash|450 / 900 мл|320 / 590 ₽|малина-алоэ
+Гранд Цитрус - Grand Citrus|450 / 900 мл|320 / 590 ₽|грейпфрут-бузина
+Тропик Эйс - Tropic Ace|450 / 900 мл|320 / 590 ₽|манго-маракуйя
+Нектар - Nectar|450 / 900 мл|320 / 590 ₽|груша-личи`],
+["chai","Чай",`Ассам|1000 мл|450 ₽
+Сенча|1000 мл|450 ₽
+Чай зелёный с жасмином|1000 мл|450 ₽
+Чай зелёный с чабрецом|1000 мл|450 ₽
+«Иван-чай»|1000 мл|450 ₽
+Молочный улун|1000 мл|450 ₽
+Фруктовый|1000 мл|450 ₽|яблоко, манго, ананас, лепестки сафлора и подсолнечника
+Ягодный|1000 мл|450 ₽|чёрный чай, папайя, вишня, брусника, малина, тархун, мальва`],
+["vod","Вода",`Легенды Байкала, негаз.|500 мл|200 ₽
+Легенды Байкала, газ.|500 мл|200 ₽
+Боржоми, ж/б|330 мл|300 ₽`],
+["bez","Безалкогольное",`Адреналин Раш|330 мл|290 ₽
+Ред Булл без сахара|250 мл|330 ₽
+Ред Булл|250 мл|330 ₽
+Кока-Кола слим|330 мл|290 ₽
+Добрый Кола без сахара|330 мл|220 ₽
+Rich Апельсин|200 мл|250 ₽
+Rich Яблоко|200 мл|250 ₽
+Rich Вишня|200 мл|250 ₽`],
+["mil","Милкшейки",`Ваниль|350 мл|250 ₽
+Клубника|350 мл|250 ₽`],
+["kof","Кофе",`Эспрессо|50 мл|190 ₽
+Американо|180 мл|190 ₽
+Капучино|200 мл|250 ₽
+Латте|200 мл|250 ₽`],
+["pivo","Пиво и сидр",`Миллер Дженьюин, США, лагер 4,7%|330 мл|400 ₽
+Корона Экстра, Мексика, лагер 4,5%|330 мл|430 ₽
+Циндао Лагер, Китай, 4,7%|330 мл|390 ₽
+Франц Лагер, Чехия, 4,5%|500 мл|650 ₽
+Майзелс Вайс Оридж, Германия, 5,1%|500 мл|690 ₽
+Якобинус Хевевайцен, Германия, 5,6%|500 мл|590 ₽
+Магнум Хеллес, Ярославль, 4,5%|450 мл|450 ₽
+Магнум Вайсбир, Ярославль, 5,2%|450 мл|450 ₽
+Магнум Американ ИПА, Ярославль, 6,5%|450 мл|450 ₽
+Магнум Милк Стаут, Ярославль, 6,3%|450 мл|450 ₽
+Бродилка Сидр Сухой, Россия, 6%|450 мл|590 ₽
+Бродилка Полусладкий, Россия, 5,5%|450 мл|590 ₽
+Медовуха Степь Смородина, Россия, 6%|450 мл|650 ₽
+Медовуха Степь Черника, Россия, 6%|450 мл|650 ₽
+Биг Пот Ред Аер Хорс|450 мл|620 ₽|Россия, смузи-эль 6,5%
+Биг Пот Изи Сквизин|450 мл|620 ₽|Россия, смузи-эль 6,5%
+Линденманс Вишня, Бельгия, 3,5%|250 мл|850 ₽
+Петрюс Ред, Бельгия, 8,5%|330 мл|870 ₽
+Бэрримор Овсяный Стаут, Ярославль, 6%|450 мл|450 ₽
+Джавс Нитро Стаут, Россия, 6%|450 мл|570 ₽`],
+["ba","Безалкогольное пиво",`Клаусталер Ориджинал, б/а, 0,49%|330 мл|390 ₽`]
+]};
+var T=[["food","Еда"],["bar","Бар"]],tab="food",cur=0;
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x)e.textContent=x;return e}
+function render(){
+var tb=document.getElementById("tabs"),ch=document.getElementById("chips"),sc=document.getElementById("sec");
+tb.textContent="";ch.textContent="";sc.textContent="";
+T.forEach(function(t){var b=el("button","",t[1]);b.type="button";b.setAttribute("aria-pressed",String(t[0]===tab));b.onclick=function(){tab=t[0];cur=0;render()};tb.appendChild(b)});
+D[tab].forEach(function(s,i){var b=el("button","",s[1]);b.type="button";b.setAttribute("aria-pressed",String(i===cur));b.onclick=function(){cur=i;render()};ch.appendChild(b)});
+var s=D[tab][cur];
+try{history.replaceState(null,"","#"+s[0])}catch(e){}
+sc.appendChild(el("h2","",s[1]));
+s[2].split("\n").forEach(function(l){
+var f=l.split("|"),r=el("div","row"),rt=el("div","rt");
+r.appendChild(el("div","n",f[0]));
+if(f[3])r.appendChild(el("div","d",f[3]));
+rt.appendChild(el("div","p",f[2]));
+if(f[1])rt.appendChild(el("div","q",f[1]));
+r.appendChild(rt);sc.appendChild(r)});
+}
+(function(){var h=(location.hash||"").slice(1);
+["food","bar"].forEach(function(k){D[k].forEach(function(s,i){if(s[0]===h){tab=k;cur=i}})});
+render()})();
+</script>
+</body>
+</html>
