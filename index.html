@@ -9,9 +9,9 @@
 :root{--bg:#f0e7d4;--ink:#1b1916;--acc:#8c1c2b;--mut:#6a5f50;--rule:rgba(140,28,43,.55);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *,*::before,*::after{box-sizing:inherit}
-body::before{content:'';position:fixed;top:10px;left:10px;right:10px;bottom:10px;border:3px double rgba(140,28,43,.55);pointer-events:none}
 body{margin:0;min-height:100vh;background:repeating-linear-gradient(0deg,rgba(70,45,20,.045) 0 1px,transparent 1px 3px),radial-gradient(ellipse at 50% 42%,transparent 52%,rgba(130,95,50,.22) 100%),#f0e7d4;color:var(--ink);font:16px/1.4 'Jost',sans-serif}
-.w{max-width:720px;margin:0 auto;padding:36px 20px 56px}
+.w{position:relative;max-width:720px;margin:0 auto;padding:44px 28px 64px}
+.w::before{content:'';position:absolute;top:10px;left:10px;right:10px;bottom:10px;border:3px double rgba(140,28,43,.55);pointer-events:none}
 .logo{text-align:center}
 .logo b{display:block;font:400 clamp(44px,13vw,64px)/1.1 'Old Standard TT',serif;letter-spacing:.3em;margin-right:-.3em}
 .logo i{display:block;font-style:normal;font-size:11px;letter-spacing:.8em;margin-right:-.8em;color:var(--acc)}
