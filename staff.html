@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>ONYX — заказы</title>
+<link href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400;700&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0e7d4;--card:#fbf6ea;--ink:#1b1916;--acc:#8c1c2b;--mut:#6a5f50;--rule:rgba(140,28,43,.55);--line:rgba(27,25,22,.16);--cook:#9a6a12;--ok:#2f6b3a;color-scheme:light}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:16px/1.4 'Jost',sans-serif;padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0)}
+button{font:inherit;color:var(--ink);background:none;border:1px solid var(--rule);min-height:48px;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+button:disabled{opacity:.55;cursor:default}
+[hidden]{display:none!important}
+
+/* шапка */
+header{position:sticky;top:0;z-index:3;background:var(--bg);border-bottom:2px solid var(--ink)}
+.hb{max-width:1280px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{font:400 26px/1 'Old Standard TT',serif;letter-spacing:.3em}
+.logo small{display:block;font:500 10px 'Jost',sans-serif;letter-spacing:.5em;color:var(--acc);margin-top:4px}
+.tabs{display:flex;gap:8px;margin-left:auto}
+.tabs button{padding:0 18px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;font-size:14px}
+.tabs button[aria-selected="true"]{background:var(--acc);border-color:var(--acc);color:#f0e7d4}
+.tabs .cnt{display:inline-block;min-width:1.6em;margin-left:6px;padding:0 6px;border-radius:12px;background:rgba(0,0,0,.12);letter-spacing:0}
+.tools{display:flex;gap:8px}
+.tools button{padding:0 12px;font-size:14px}
+#net{width:100%;margin:0;padding:6px 16px;background:var(--acc);color:#f0e7d4;font-size:14px;text-align:center}
+
+main{max-width:1280px;margin:0 auto;padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;align-items:start}
+.empty{padding:60px 16px;text-align:center;color:var(--mut);font-size:18px}
+.sumday{margin:0 0 14px;color:var(--mut)}
+.sumday b{color:var(--ink)}
+
+/* карточка заказа */
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--acc);padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px}
+.card.cooking{border-top-color:var(--cook)}
+.card.served{border-top-color:var(--ok)}
+.card.fresh{animation:pulse 1.2s ease-in-out 4}
+@keyframes pulse{50%{box-shadow:0 0 0 4px rgba(140,28,43,.35)}}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.tbl{font:700 30px/1 'Old Standard TT',serif}
+.who{font-size:14px;color:var(--mut);margin-top:4px}
+.who b{color:var(--ink);font-weight:500}
+.pill{flex:none;padding:3px 10px;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--acc)}
+.cooking .pill{background:var(--cook)}
+.served .pill{background:var(--ok)}
+.time{font-size:13px;color:var(--mut)}
+.time .late{color:var(--acc);font-weight:500}
+ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+li{display:grid;grid-template-columns:auto 1fr auto;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+li .q{font-weight:500;min-width:2.2em}
+li .s{color:var(--mut);font-size:13px}
+li .r{white-space:nowrap}
+.tot{display:flex;justify-content:space-between;font-weight:500;font-size:17px}
+.act{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.act button{padding:0 10px;font-weight:500;font-size:14px;letter-spacing:.04em}
+.b-cook[aria-pressed="true"]{background:var(--cook);border-color:var(--cook);color:#fff}
+.b-done{background:var(--acc);border-color:var(--acc);color:#f0e7d4}
+.b-back{grid-column:1/-1;font-size:14px}
+.err{margin:0;color:var(--acc);font-size:14px}
+
+/* вход */
+.login{max-width:360px;margin:12vh auto 0;padding:28px 24px;border:3px double var(--rule);text-align:center}
+.login h1{font:400 34px/1 'Old Standard TT',serif;letter-spacing:.3em;margin:0 0 6px}
+.login p{margin:0 0 18px;color:var(--mut)}
+.login input{width:100%;min-height:52px;font:500 22px 'Jost',sans-serif;letter-spacing:.4em;text-align:center;border:1px solid var(--rule);background:var(--card);color:var(--ink);margin-bottom:10px}
+.login button{width:100%;min-height:52px;background:var(--acc);border-color:var(--acc);color:#f0e7d4;font-weight:500;letter-spacing:.2em;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<form class="login" id="login" hidden>
+  <h1>ONYX</h1>
+  <p>Заказы гостей. Введите PIN.</p>
+  <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" aria-label="PIN" required>
+  <p class="err" id="lerr" role="alert"></p>
+  <button type="submit">Войти</button>
+</form>
+
+<div id="app" hidden>
+  <header>
+    <div class="hb">
+      <div class="logo">ONYX<small>ЗАКАЗЫ</small></div>
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" id="tA" aria-selected="true" aria-controls="pA">Активные<span class="cnt" id="cA">0</span></button>
+        <button type="button" role="tab" id="tH" aria-selected="false" aria-controls="pH">История</button>
+      </div>
+      <div class="tools">
+        <button type="button" id="snd" aria-pressed="false">🔕 Звук</button>
+        <button type="button" id="out">Выйти</button>
+      </div>
+    </div>
+    <p id="net" role="status" hidden>Нет связи с сервером, пробуем снова…</p>
+  </header>
+  <main>
+    <section id="pA" role="tabpanel" aria-labelledby="tA"><div class="grid" id="gA"></div></section>
+    <section id="pH" role="tabpanel" aria-labelledby="tH" hidden><p class="sumday" id="day"></p><div class="grid" id="gH"></div></section>
+  </main>
+</div>
+
+<script>
+var POLL_MS=4000, LATE_MIN=20; // через сколько минут подсвечивать заказ как долгий
+var pin="", data={active:[],history:[]}, seen=null, last="", timer=null, busy={}, errs={}, sound=false, actx=null;
+
+function $(id){return document.getElementById(id)}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
+function money(n){return n.toLocaleString("ru-RU")+" ₽"}
+function hm(iso){return new Date(iso).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"})}
+function mins(iso){return Math.max(0,Math.floor((Date.now()-Date.parse(iso))/60000))}
+
+/* ----- сеть ----- */
+function api(path,opt){
+  opt=opt||{};opt.headers={"X-Staff-Pin":pin,"Content-Type":"application/json"};
+  return fetch(path,opt).then(function(r){
+    if(r.status===401){logout("Неверный PIN");throw "auth"}
+    return r.json().catch(function(){return{}}).then(function(j){if(!r.ok)throw (j.error||"Ошибка "+r.status);return j});
+  });
+}
+function load(){
+  clearTimeout(timer);
+  return api("/api/staff/orders").then(function(j){
+    $("net").hidden=true;
+    var ids=j.active.map(function(o){return o.id});
+    if(seen){var fresh=ids.filter(function(id){return seen.indexOf(id)<0});if(fresh.length)ding(fresh)}
+    seen=(seen||[]).concat(ids.filter(function(id){return !seen||seen.indexOf(id)<0}));
+    data=j;var key=JSON.stringify(j.active)+JSON.stringify(j.history);
+    if(key!==last){last=key;render()}
+  }).catch(function(e){if(e!=="auth")$("net").hidden=false})
+  .then(function(){if(pin)timer=setTimeout(load,POLL_MS)});
+}
+function setStatus(id,status){
+  busy[id]=true;delete errs[id];render();
+  api("/api/staff/orders/"+id+"/status",{method:"POST",body:JSON.stringify({status:status})})
+    .then(function(){delete busy[id];last="";return load()})
+    .catch(function(e){delete busy[id];if(e!=="auth"){errs[id]=typeof e==="string"?e:"Не удалось, попробуйте ещё раз";render()}});
+}
+
+/* ----- звук и мигание новых ----- */
+var flash={};
+function ding(ids){
+  ids.forEach(function(id){flash[id]=true});
+  document.title="("+ids.length+") Новый заказ — ONYX";
+  setTimeout(function(){document.title="ONYX — заказы"},8000);
+  if(!sound||!actx)return;
+  try{[0,.25].forEach(function(t){var o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;o.connect(g);g.connect(actx.destination);
+    g.gain.setValueAtTime(.0001,actx.currentTime+t);g.gain.exponentialRampToValueAtTime(.4,actx.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+t+.2);
+    o.start(actx.currentTime+t);o.stop(actx.currentTime+t+.22)})}catch(e){}
+}
+$("snd").onclick=function(){
+  sound=!sound;store("onyx_sound",sound?"1":"0");
+  if(sound&&!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}
+  if(actx&&actx.state==="suspended")actx.resume();
+  paintSound();if(sound)ding([]);
+};
+function paintSound(){$("snd").textContent=(sound?"🔔":"🔕")+" Звук";$("snd").setAttribute("aria-pressed",String(sound))}
+
+/* ----- отрисовка ----- */
+var LABEL={new:"Новый",cooking:"Готовится",served:"Отдан"};
+function card(o){
+  var c=el("article","card "+o.status+(flash[o.id]?" fresh":""));
+  c.setAttribute("aria-label","Заказ "+o.id+", стол "+o.table);
+  var top=el("div","top"),l=el("div");
+  l.appendChild(el("div","tbl","Стол "+o.table));
+  var who=el("div","who","№ "+o.id+" · ID ");who.appendChild(el("b","",o.guestId));l.appendChild(who);
+  top.appendChild(l);top.appendChild(el("span","pill",LABEL[o.status]||o.status));c.appendChild(top);
+
+  var t=el("div","time");
+  if(o.status==="served"){t.textContent="Принят "+hm(o.createdAt)+" · отдан "+hm(o.servedAt)}
+  else{
+    var m=mins(o.createdAt);t.appendChild(document.createTextNode("Принят "+hm(o.createdAt)+" · "));
+    t.appendChild(el("span",m>=LATE_MIN?"late":"",m?m+" мин назад":"только что"));
+    if(o.cookingAt)t.appendChild(document.createTextNode(" · готовится с "+hm(o.cookingAt)));
+  }
+  c.appendChild(t);
+
+  var ul=el("ul");
+  o.items.forEach(function(i){
+    var li=el("li");li.appendChild(el("span","q",i.qty+" ×"));
+    var n=el("span","",i.name);if(i.size){n.appendChild(document.createTextNode(" "));n.appendChild(el("span","s",i.size))}
+    li.appendChild(n);li.appendChild(el("span","r",money(i.sum)));ul.appendChild(li);
+  });
+  c.appendChild(ul);
+  var tot=el("div","tot");tot.appendChild(el("span","","Итого"));tot.appendChild(el("span","",money(o.total)));c.appendChild(tot);
+
+  var act=el("div","act"),b;
+  if(o.status==="served"){
+    b=el("button","b-back","Вернуть в работу");b.type="button";b.disabled=!!busy[o.id];
+    b.onclick=function(){setStatus(o.id,"cooking")};act.appendChild(b);
+  }else{
+    b=el("button","b-cook",o.status==="cooking"?"Готовится":"В процессе готовки");b.type="button";
+    b.setAttribute("aria-pressed",String(o.status==="cooking"));b.disabled=!!busy[o.id]||o.status==="cooking";
+    b.onclick=function(){setStatus(o.id,"cooking")};act.appendChild(b);
+    b=el("button","b-done","Заказ отдан");b.type="button";b.disabled=!!busy[o.id];
+    b.onclick=function(){delete flash[o.id];setStatus(o.id,"served")};act.appendChild(b);
+  }
+  c.appendChild(act);
+  if(errs[o.id])c.appendChild(el("p","err",errs[o.id]));
+  c.addEventListener("click",function(){if(flash[o.id]){delete flash[o.id];c.classList.remove("fresh")}});
+  return c;
+}
+function render(){
+  var a=data.active.slice().sort(function(x,y){return x.id-y.id}),h=data.history;
+  $("cA").textContent=a.length;
+  var gA=$("gA"),gH=$("gH");gA.textContent="";gH.textContent="";
+  if(!a.length)gA.appendChild(el("p","empty","Активных заказов нет"));
+  a.forEach(function(o){gA.appendChild(card(o))});
+  if(!h.length)gH.appendChild(el("p","empty","История пуста"));
+  h.forEach(function(o){gH.appendChild(card(o))});
+  var today=new Date().toDateString(),td=h.filter(function(o){return new Date(o.servedAt).toDateString()===today});
+  var d=$("day");d.textContent="Сегодня отдано: ";d.appendChild(el("b","",td.length+" "+word(td.length)));
+  d.appendChild(document.createTextNode(" на "));d.appendChild(el("b","",money(td.reduce(function(s,o){return s+o.total},0))));
+}
+function word(n){var a=n%10,b=n%100;return a===1&&b!==11?"заказ":a>=2&&a<=4&&(b<12||b>14)?"заказа":"заказов"}
+setInterval(function(){if(pin&&!$("app").hidden)render()},30000); // обновляем «N мин назад»
+
+/* ----- вкладки ----- */
+function tab(h){
+  $("tA").setAttribute("aria-selected",String(!h));$("tH").setAttribute("aria-selected",String(h));
+  $("pA").hidden=h;$("pH").hidden=!h;
+}
+$("tA").onclick=function(){tab(false)};$("tH").onclick=function(){tab(true)};
+
+/* ----- вход / выход ----- */
+function showLogin(msg){$("app").hidden=true;$("login").hidden=false;$("lerr").textContent=msg||"";$("pin").value="";$("pin").focus()}
+function logout(msg){pin="";seen=null;last="";clearTimeout(timer);store("onyx_pin",null);showLogin(msg)}
+$("out").onclick=function(){logout("")};
+$("login").addEventListener("submit",function(e){
+  e.preventDefault();var v=$("pin").value.trim();if(!v)return;
+  $("lerr").textContent="";
+  pin=v;
+  if(sound&&!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}
+  fetch("/api/staff/orders",{headers:{"X-Staff-Pin":pin}}).then(function(r){
+    if(r.status===401){pin="";$("lerr").textContent="Неверный PIN";$("pin").select();return}
+    if(r.status===429){pin="";return r.json().then(function(j){$("lerr").textContent=j.error})}
+    store("onyx_pin",pin);start();
+  }).catch(function(){pin="";$("lerr").textContent="Нет связи с сервером"});
+});
+function start(){$("login").hidden=true;$("app").hidden=false;load()}
+
+// браузер разрешает звук только после касания экрана
+document.addEventListener("pointerdown",function(){
+  if(sound&&!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}
+  if(actx&&actx.state==="suspended")actx.resume();
+});
+sound=store("onyx_sound")==="1";paintSound();
+pin=store("onyx_pin")||"";
+if(pin)start();else showLogin("");
+</script>
+</body>
+</html>
