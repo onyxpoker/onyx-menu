@@ -1,0 +1,4 @@
+# заказы гостей — не выкладывать в репозиторий
+orders.json
+orders.json.tmp
+node_modules/

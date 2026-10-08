@@ -116,9 +116,10 @@ input[aria-invalid="true"]{border-color:var(--acc);box-shadow:0 0 0 1px var(--ac
 
 <script>
 /* ===== НАСТРОЙКА =====
-   Адрес, на который отправляется заказ (POST, JSON). Пока пусто — заказ
+   Адрес, на который отправляется заказ (POST, JSON). Заказы принимает server.js
+   и показывает официантам на странице /staff. Если оставить пусто — заказ
    не отправляется, а гость видит экран с заказом, чтобы показать официанту. */
-var ORDER_URL = "";
+var ORDER_URL = "/api/orders";
 
 var D={food:[
 ["zak","Закуски",`Куриный попкорн|200 г|425 ₽
@@ -355,12 +356,13 @@ $("frm").addEventListener("submit",function(e){
   if(!ORDER_URL){done(order,false);return}
   var btn=$("send");btn.disabled=true;btn.textContent="Отправляем…";
   fetch(ORDER_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(order)})
-    .then(function(r){if(!r.ok)throw 0;done(order,true)})
+    .then(function(r){if(!r.ok)throw 0;return r.json()})
+    .then(function(j){order.id=j&&j.id;done(order,true)})
     .catch(function(){er.textContent="Не удалось отправить заказ. Попробуйте ещё раз или позовите официанта."})
     .then(function(){btn.disabled=false;btn.textContent="Отправить заказ"});
 });
 function done(order,sent){
-  $("okt").textContent=sent?"Заказ отправлен":"Ваш заказ";
+  $("okt").textContent=sent?(order.id?"Заказ №"+order.id+" отправлен":"Заказ отправлен"):"Ваш заказ";
   $("okWho").textContent="Стол "+order.table+" · ID "+order.guestId;
   $("okHint").textContent=sent?"Официант скоро подойдёт.":"Покажите этот экран официанту.";
   var l=$("okList");l.textContent="";

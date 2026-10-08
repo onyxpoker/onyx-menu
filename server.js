@@ -11,8 +11,12 @@
     http://адрес:3000/staff   — страница официантов (вход по PIN)
   Заказы хранятся в orders.json в этой же папке.
 
-  Необязательные настройки: PORT (по умолчанию 3000),
-  HISTORY_DAYS — сколько дней хранить выданные заказы (по умолчанию 30).
+  Необязательные настройки:
+    PORT           — порт (по умолчанию 3000)
+    HOST           — адрес прослушивания (за Caddy/nginx ставьте 127.0.0.1)
+    ALLOWED_ORIGIN — адрес сайта с меню, если меню лежит на другом домене,
+                     например https://ваш-логин.github.io (несколько — через запятую)
+    HISTORY_DAYS   — сколько дней хранить выданные заказы (по умолчанию 30)
 */
 "use strict";
 const http = require("http");
@@ -23,6 +27,8 @@ const crypto = require("crypto");
 const PORT = Number(process.env.PORT) || 3000;
 const PIN = String(process.env.STAFF_PIN || "");
 const HISTORY_DAYS = Number(process.env.HISTORY_DAYS) || 30;
+const HOST = process.env.HOST || "0.0.0.0";
+const ORIGINS = String(process.env.ALLOWED_ORIGIN || "").split(",").map(s => s.trim().replace(/\/+$/, "")).filter(Boolean);
 const DIR = __dirname;
 const DATA = path.join(DIR, "orders.json");
 
@@ -148,6 +154,16 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, html, "text/html; charset=utf-8");
     }
 
+    // разрешаем меню с другого домена (GitHub Pages) отправлять заказы
+    if (p === "/api/orders" && ORIGINS.includes(req.headers.origin)) {
+      res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
+      res.setHeader("Vary", "Origin");
+      if (req.method === "OPTIONS") {
+        res.writeHead(204, { "Access-Control-Allow-Methods": "POST", "Access-Control-Allow-Headers": "Content-Type", "Access-Control-Max-Age": "86400" });
+        return res.end();
+      }
+    }
+
     if (p === "/api/orders" && req.method === "POST") {
       const ip = ipOf(req), now = Date.now();
       const hits = (orderHits.get(ip) || []).filter(t => now - t < 60e3);
@@ -181,7 +197,8 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, HOST, () => {
+  if (ORIGINS.length) console.log("ONYX: принимаю заказы с " + ORIGINS.join(", "));
   console.log(`ONYX: меню      http://localhost:${PORT}/`);
   console.log(`ONYX: официанты http://localhost:${PORT}/staff`);
 });
